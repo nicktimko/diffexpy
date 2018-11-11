@@ -8,25 +8,25 @@ from typing import Dict
 
 import numpy as np
 import pandas as pd
-import rpy2.robjects as robjects
-import rpy2.robjects.numpy2ri
+# import rpy2.robjects as robjects
+# import rpy2.robjects.numpy2ri
 from natsort import natsorted
-from rpy2.robjects.packages import importr
+# from rpy2.robjects.packages import importr
 
 from pydiffexp.utils import multiindex_helpers as mi
-from pydiffexp.utils import r2py as rh
+# from pydiffexp.utils import r2py as rh
 from pydiffexp.utils.utils import int_or_float, grepl
 
 # Activate conversion
-rpy2.robjects.numpy2ri.activate()
+# rpy2.robjects.numpy2ri.activate()
 
 # Load R packages
-limma = importr('limma')
-stats = importr('stats')
-edgeR = importr('edgeR')
+# limma = importr('limma')
+# stats = importr('stats')
+# edgeR = importr('edgeR')
 
 # Set null variable
-null = robjects.r("NULL")
+# null = robjects.r("NULL")
 
 
 def cluster_discrete(df) -> pd.DataFrame:
@@ -444,12 +444,12 @@ class DEAnalysis(object):
     def _set_data(self, df, index_names=None, split_str='_', reference_labels=None, log2=True):
         """
         Set the data for the DEAnalysis object
-        :param df: DataFrame; 
+        :param df: DataFrame;
         :param index_names: list-like;
         :param split_str: string;
         :param reference_labels: list-like;
         :param voom: bool; Voom the data for fitting. True if using counts data from RNA-seq. False if using microarray
-        :return: 
+        :return:
         """
         # Check for a multiindex or try making one
         multiindex = mi.is_multiindex(df)
@@ -485,7 +485,7 @@ class DEAnalysis(object):
         """
         Decide if data is timeseries or not. If it is, return the unique times
         :param time_var: str; Column name of the time variable
-        :return: 
+        :return:
         """
         times = []
         is_timeseries = False
@@ -849,18 +849,18 @@ class DEAnalysis(object):
     def _make_fit_dict(self, contrasts, fit_names=None, force_separate=False) -> dict:
         """
         Make a dictionary of fits to conduct
-        :param contrasts: 
-        :param fit_names: list; Names for each fit. Only used when contrasts are a list. If none are supplied, 
+        :param contrasts:
+        :param fit_names: list; Names for each fit. Only used when contrasts are a list. If none are supplied,
         integers are used
         :param force_separate: bool; Only used when contrasts are a list. If True, force individual contrast items to
-        be fit independently. 
-        :return: 
+        be fit independently.
+        :return:
         """
 
         # List
         if isinstance(contrasts, list):
             '''
-            If it is a list, determine how many fits exist. If all items in the list aren't strings, then it is likely 
+            If it is a list, determine how many fits exist. If all items in the list aren't strings, then it is likely
             multiple contrasts for independent fits
             '''
             n_fits = 1
@@ -869,7 +869,7 @@ class DEAnalysis(object):
             n_strings = sum(contrast_types == str)
 
             '''
-            If not all of the list items are strings or user specifies to force separate, than each item will be a 
+            If not all of the list items are strings or user specifies to force separate, than each item will be a
             separate fit
             '''
             if (n_strings != len(contrasts)) | force_separate:

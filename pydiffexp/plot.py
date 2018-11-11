@@ -3,6 +3,7 @@ import warnings
 from collections import Counter
 
 import matplotlib as mpl
+mpl.use("agg")
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
@@ -241,12 +242,12 @@ class DEPlot(object):
     @staticmethod
     def confidence_interval_lines(mean, se, tstat):
         """
-        
-        :param mean: array 
+
+        :param mean: array
         :param se: array
         :param tstat: array
         :param ci: float 0-1
-        :return: 
+        :return:
         """
         upper = mean + se * tstat
         lower = mean - se * tstat

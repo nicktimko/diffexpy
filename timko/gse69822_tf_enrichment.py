@@ -1,4 +1,5 @@
-import multiprocessing as mp
+import itertools
+# import multiprocessing as mp
 
 import pandas as pd
 from pydiffexp.utils import fisher_test as ft
@@ -25,10 +26,10 @@ def tf_cluster_search(gene_sets: dict, gene_to_tf: dict, background=None):
 
     sets = [(er, frozenset(s), l) for l, s in gene_sets.items()]
     labels = [ss[2] for ss in sets]
-    pool = mp.pool.ThreadPool()
-    df_list = pool.starmap(tf_work, sets)
-    pool.close()
-    pool.join()
+    df_list = itertools.starmap(tf_work, sets)
+
+    # XXX: less input to run faster
+    df_list = itertools.islice(df_list, 2)
 
     # Pandas multiindex workaround
     results = pd.DataFrame()
@@ -51,6 +52,10 @@ def main():
      """
     # todo: argv and parsing
 
+    # import cProfile as profile
+    # p = profile.Profile()
+    # p.enable()
+
     # Set globals
     pd.set_option('display.width', 250)
 
@@ -69,6 +74,9 @@ def main():
     # Parallelized search that doesn't work yet
     tf_enriched = tf_cluster_search(gene_sets, gene_to_tf_dict, background=background_genes)
     print(tf_enriched.head())
+
+    # p.disable()
+    # p.dump_stats("gene_enrichment.profile")
 
 
 if __name__ == '__main__':

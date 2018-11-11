@@ -62,35 +62,31 @@ def convert_gene_to_tf(gene_list, gene_dict):
 
     return tf_list, tf_dict
 
-
+import collections
 def tf_to_gene_dict(gene_list, gene_to_tf_dict):
     """
+    For all the genes in *gene_list*, flip the *gene_to_tf_dict* mapping
+    around and with *tf* as a key, return the set of all related genes.
 
     :param gene_list:
     :param gene_to_tf_dict:
     :return:
     """
-    # Get a set of TFs from the dictionary values
-    tf_set = set(chain(*gene_to_tf_dict.values()))
+    genes_to_return = set(gene_list)
 
-    # Initialize dictionary with TFs as keys
-    tf_dict = {tf: None for tf in tf_set}
+    def gene_tf_pairs():
+        for gene, tfs in gene_to_tf_dict.items():
+            if gene not in genes_to_return:
+                continue
+            for tf in tfs:
+                yield gene, tf
 
-    # Precompute what TF is in what gene for faster lookup
-    tfs_in_gene = {}
-    for gene in gene_list:
-        try:
-            tfs = set(gene_to_tf_dict[gene])
-        except KeyError:
-            continue
+    tfs_to_genes = collections.defaultdict(set)
 
-        tfs_in_gene[gene] = tfs
+    for gene, tf in gene_tf_pairs():
+        tfs_to_genes[tf].add(gene)
 
-    for tf in tf_dict:
-        # Create a set of genes that are associated with the given TF
-        tf_dict[tf] = set(gene for gene, tfs in tfs_in_gene.items() if tf in tfs)
-
-    return tf_dict
+    return dict(tfs_to_genes)
 
 
 def calc_frac(x, split_str='/'):
@@ -241,5 +237,3 @@ class Enricher(object):
         bg_count = len(bg_genes)
         enrich = calculate_study_enrichment(study_count, study_dict, bg_count, bg, fdr=fdr)
         return enrich
-
-
